@@ -1,95 +1,94 @@
 using UnityEngine;
 
-public class HostMovementController : MonoBehaviour
+public class PoliceAI : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private PlayerStateController playerStateController;
+    [SerializeField] private float movementSpeed = 3.5f;
     [SerializeField] private float turnSpeed = 10f;
     [SerializeField] private Vector3 rotationOffsetEuler;
     [SerializeField] private float movementPulseFrequency = 8f;
-    [SerializeField] private float movementStretchAmount = 0.08f;
+    [SerializeField] private float movementStretchAmount = 0.06f;
     [SerializeField] private float scaleReturnSpeed = 8f;
+    [SerializeField] private float detectionRange = 6f;
+    [SerializeField] private float arrestDistance = 1.1f;
+    [SerializeField] private float wanderRadius = 5f;
+    [SerializeField] private float directionChangeInterval = 2f;
     [SerializeField] private LayerMask waterLayerMask;
     [SerializeField] private LayerMask obstacleLayerMask;
     [SerializeField] private float terrainCheckRadius = 0.6f;
     [SerializeField] private float obstacleCheckDistance = 0.8f;
     [SerializeField] private float obstacleCheckRadius = 0.35f;
-    [SerializeField] private float flyerHoverHeight = 2.5f;
-    [SerializeField] private float flyerHeightSmoothing = 8f;
 
-    private bool playerControlEnabled;
-    private HostType hostType = HostType.Walker;
+    private Vector3 spawnPosition;
+    private Vector3 currentDirection;
+    private float directionTimer;
     private Collider cachedCollider;
-    private HostController hostController;
-    private float flyerTargetHeight;
-    private Quaternion initialRotationOffset;
     private Vector3 baseScale;
     private float movementPulseTimer;
     private bool movedThisFrame;
 
     private void Awake()
     {
+        spawnPosition = transform.position;
         cachedCollider = GetComponent<Collider>();
-        hostController = GetComponent<HostController>();
-        flyerTargetHeight = transform.position.y;
-        initialRotationOffset = transform.rotation;
         baseScale = transform.localScale;
+        PickNewDirection();
     }
 
     private void Update()
     {
+        movedThisFrame = false;
+
         if (GameManager.Instance != null && GameManager.Instance.IsGameplayLocked())
         {
-            MaintainSpecialMovementState();
+            UpdateMovementPulse();
             return;
         }
 
-        if (!playerControlEnabled)
+        if (playerStateController != null && playerStateController.IsBaseFormExposed())
         {
-            return;
+            Transform baseForm = playerStateController.GetBaseFormTransform();
+            Vector3 toBase = baseForm.position - transform.position;
+            float distanceToBase = toBase.magnitude;
+
+            if (distanceToBase <= detectionRange)
+            {
+                Vector3 chaseDirection = new Vector3(toBase.x, 0f, toBase.z).normalized;
+                TryMove(chaseDirection);
+                FaceMovementDirection(chaseDirection);
+
+                if (distanceToBase <= arrestDistance)
+                {
+                    GameManager.Instance?.TriggerGameOver("You Were Arrested");
+                }
+
+                UpdateMovementPulse();
+                return;
+            }
         }
 
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        Vector3 moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
-        if (moveDirection.sqrMagnitude <= 0f)
-        {
-            MaintainSpecialMovementState();
-            return;
-        }
-
-        TryMove(moveDirection, moveSpeed);
-        MaintainSpecialMovementState();
-    }
-
-    private void LateUpdate()
-    {
+        UpdateWander();
         UpdateMovementPulse();
-        movedThisFrame = false;
     }
 
-    public void SetPlayerControlEnabled(bool enabled)
+    private void UpdateWander()
     {
-        playerControlEnabled = enabled;
-    }
-
-    public void SetHostType(HostType newHostType)
-    {
-        hostType = newHostType;
-
-        if (hostType == HostType.Flyer)
+        directionTimer -= Time.deltaTime;
+        if (directionTimer <= 0f || Vector3.Distance(transform.position, spawnPosition) > wanderRadius)
         {
-            flyerTargetHeight = flyerHoverHeight;
-            SnapToFlyerHeight();
+            PickNewDirection();
         }
+
+        if (!TryMove(currentDirection))
+        {
+            PickNewDirection();
+            return;
+        }
+
+        FaceMovementDirection(currentDirection);
     }
 
-    public bool IsCurrentlyOverWater()
-    {
-        return IsOverWater(transform.position);
-    }
-
-    public bool TryMove(Vector3 moveDirection, float speed)
+    private bool TryMove(Vector3 moveDirection)
     {
         if (moveDirection.sqrMagnitude <= 0f)
         {
@@ -97,45 +96,27 @@ public class HostMovementController : MonoBehaviour
         }
 
         Vector3 normalizedDirection = moveDirection.normalized;
-        Vector3 desiredPosition = transform.position + normalizedDirection * speed * Time.deltaTime;
-        if (!CanMoveTo(desiredPosition, normalizedDirection))
+        Vector3 desiredPosition = transform.position + normalizedDirection * movementSpeed * Time.deltaTime;
+        if (IsOverWater(desiredPosition) || IsObstacleAhead(normalizedDirection))
         {
             return false;
         }
 
-        if (hostType == HostType.Flyer)
-        {
-            desiredPosition.y = flyerTargetHeight;
-        }
-
         transform.position = desiredPosition;
-        FaceMovementDirection(normalizedDirection);
         movedThisFrame = true;
         return true;
     }
 
-    private bool CanMoveTo(Vector3 desiredPosition, Vector3 moveDirection)
+    private void PickNewDirection()
     {
-        bool isOverWater = IsOverWater(desiredPosition);
+        Vector2 randomDirection = Random.insideUnitCircle.normalized;
+        currentDirection = new Vector3(randomDirection.x, 0f, randomDirection.y);
+        directionTimer = directionChangeInterval;
 
-        switch (hostType)
+        Vector3 offsetFromSpawn = transform.position - spawnPosition;
+        if (offsetFromSpawn.sqrMagnitude > wanderRadius * wanderRadius)
         {
-            case HostType.Walker:
-                if (isOverWater || IsObstacleAhead(moveDirection))
-                {
-                    return false;
-                }
-
-                return true;
-
-            case HostType.Swimmer:
-                return isOverWater;
-
-            case HostType.Flyer:
-                return true;
-
-            default:
-                return true;
+            currentDirection = new Vector3(-offsetFromSpawn.x, 0f, -offsetFromSpawn.z).normalized;
         }
     }
 
@@ -170,7 +151,7 @@ public class HostMovementController : MonoBehaviour
         }
 
         Bounds bounds = cachedCollider.bounds;
-        return new Vector3(bounds.center.x, bounds.center.y, bounds.center.z);
+        return bounds.center;
     }
 
     private float GetObstacleCheckRadius()
@@ -185,25 +166,6 @@ public class HostMovementController : MonoBehaviour
         return Mathf.Max(obstacleCheckRadius, derivedRadius);
     }
 
-    private void MaintainSpecialMovementState()
-    {
-        if (hostType != HostType.Flyer)
-        {
-            return;
-        }
-
-        Vector3 position = transform.position;
-        position.y = Mathf.Lerp(position.y, flyerTargetHeight, flyerHeightSmoothing * Time.deltaTime);
-        transform.position = position;
-    }
-
-    private void SnapToFlyerHeight()
-    {
-        Vector3 position = transform.position;
-        position.y = flyerTargetHeight;
-        transform.position = position;
-    }
-
     private void FaceMovementDirection(Vector3 moveDirection)
     {
         Vector3 flatDirection = new Vector3(moveDirection.x, 0f, moveDirection.z);
@@ -213,23 +175,11 @@ public class HostMovementController : MonoBehaviour
         }
 
         Quaternion targetRotation = Quaternion.LookRotation(flatDirection.normalized) * Quaternion.Euler(rotationOffsetEuler);
-        targetRotation *= initialRotationOffset;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
     }
 
     private void UpdateMovementPulse()
     {
-        if (hostController != null && hostController.IsDying)
-        {
-            return;
-        }
-
-        if (hostType == HostType.Flyer)
-        {
-            transform.localScale = Vector3.Lerp(transform.localScale, baseScale, scaleReturnSpeed * Time.deltaTime);
-            return;
-        }
-
         if (movedThisFrame)
         {
             movementPulseTimer += Time.deltaTime * movementPulseFrequency;

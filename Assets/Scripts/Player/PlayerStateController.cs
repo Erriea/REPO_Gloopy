@@ -81,6 +81,29 @@ public class PlayerStateController : MonoBehaviour
         ReturnedToBaseForm?.Invoke();
     }
 
+    public void EnterDrowningGameOver()
+    {
+        if (currentHost != null)
+        {
+            currentHost.Release();
+            currentHost = null;
+        }
+
+        currentForm = PlayerForm.BaseForm;
+
+        if (alienBaseObject != null)
+        {
+            alienBaseObject.SetActive(false);
+        }
+
+        if (cameraFollow != null)
+        {
+            cameraFollow.SetTarget(null);
+        }
+
+        ReturnedToBaseForm?.Invoke();
+    }
+
     public Transform GetActiveTransform()
     {
         if (currentForm == PlayerForm.HostForm && currentHost != null)
@@ -89,6 +112,18 @@ public class PlayerStateController : MonoBehaviour
         }
 
         return alienBaseObject != null ? alienBaseObject.transform : transform;
+    }
+
+    public Transform GetBaseFormTransform()
+    {
+        return alienBaseObject != null ? alienBaseObject.transform : transform;
+    }
+
+    public bool IsBaseFormExposed()
+    {
+        return currentForm == PlayerForm.BaseForm &&
+               alienBaseObject != null &&
+               alienBaseObject.activeInHierarchy;
     }
 
     private void UpdateCameraTarget()
