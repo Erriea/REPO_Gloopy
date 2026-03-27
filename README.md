@@ -42,6 +42,14 @@ See [requirements.txt](/C:/Code/2026%20Unity/REPO_Gloopy/requirements.txt) for t
 ## Credits
 - Game concept, design direction, scene setup, art selection, and final creative decisions: project author
 - AI-assisted coding and iteration support: Cursor / Codex
+- Sound effects and music sourced from Pixabay:
+  - Button click: [Old radio button click](https://pixabay.com/sound-effects/film-special-effects-old-radio-button-click-97549/)
+  - Win sound: [Yippee](https://pixabay.com/sound-effects/film-special-effects-yipee-45360/)
+  - Lose sound: [Aw man](https://pixabay.com/sound-effects/people-aww-man-sfx-430253/)
+  - Host swap / movement accent: [Swoosh](https://pixabay.com/sound-effects/film-special-effects-hit-sound-178475/)
+  - Target select: [Short beep tone](https://pixabay.com/sound-effects/film-special-effects-short-beep-tone-47916/)
+  - Background music: [Roblox Minecraft Fortnite video game music](https://pixabay.com/music/electronic-roblox-minecraft-fortnite-video-game-music-498036/)
+  - Host death sound: [Male death scream horror](https://pixabay.com/sound-effects/people-male-death-scream-horror-352706/)
 
 ## AI Use Note
 AI was used to help design systems, generate and revise gameplay code, create simple custom shaders, debug implementation issues, and draft supporting documentation.
