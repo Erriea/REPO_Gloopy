@@ -81,6 +81,26 @@ public class HostController : MonoBehaviour
         return movementController != null && movementController.IsCurrentlyOverWater();
     }
 
+    public bool IsValidSpawnLocation()
+    {
+        bool isOverWater = IsOverWater();
+
+        switch (hostType)
+        {
+            case HostType.Walker:
+                return !isOverWater;
+
+            case HostType.Swimmer:
+                return isOverWater;
+
+            case HostType.Flyer:
+                return true;
+
+            default:
+                return true;
+        }
+    }
+
     public void Die()
     {
         if (isDying)
@@ -111,6 +131,7 @@ public class HostController : MonoBehaviour
             hostCollider.enabled = false;
         }
 
+        AudioManager.Instance?.PlayHostDeath();
         SpawnDeathParticles();
 
         float elapsed = 0f;

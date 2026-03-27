@@ -18,19 +18,25 @@ public class TutorialUIController : MonoBehaviour
     [SerializeField] private Button skipButton;
     [SerializeField] private TextMeshProUGUI nextButtonLabel;
     [SerializeField] private bool showTutorialOnStart = true;
+    [SerializeField] private bool useDefaultTutorialPages = true;
     [SerializeField] private List<TutorialPage> pages = new()
     {
-        new TutorialPage { body = "Move controlled hosts with WASD. Your alien base form cannot move on its own." },
-        new TutorialPage { body = "Click a nearby host to target it, then press Space to infect it." },
-        new TutorialPage { body = "Walkers use land, swimmers use water, and flyers can cross both while ignoring obstacles." },
-        new TutorialPage { body = "Reach the spaceship to win. Police can arrest you only while you are exposed in base form." },
-        new TutorialPage { body = "Hosts die when their timer runs out. If a swimmer dies in water, you drown and lose." }
+        new TutorialPage { body = "You are Gloopy, a little alien stuck on a strange planet. You should not be here and need to find your spaceship in order to go home." },
+        new TutorialPage { body = "Move controlled hosts with WASD. In your base form you cannot move at all, so click a nearby host to target it and press Space to infect it." },
+        new TutorialPage { body = "Walkers move on land, swimmers move through water, and flyers can cross both while ignoring obstacles." },
+        new TutorialPage { body = "Watch out for the police. They can arrest you if they catch you while you are exposed in base form." },
+        new TutorialPage { body = "Keep an eye on your host timer. If a swimmer dies while you are over water, you will drown and lose." }
     };
 
     private int currentPageIndex;
 
     private void Start()
     {
+        if (useDefaultTutorialPages)
+        {
+            BuildDefaultPages();
+        }
+
         if (nextButton != null)
         {
             nextButton.onClick.AddListener(AdvanceTutorial);
@@ -77,6 +83,7 @@ public class TutorialUIController : MonoBehaviour
 
     public void AdvanceTutorial()
     {
+        AudioManager.Instance?.PlayButtonClick();
         currentPageIndex++;
 
         if (currentPageIndex >= pages.Count)
@@ -90,6 +97,7 @@ public class TutorialUIController : MonoBehaviour
 
     public void SkipTutorial()
     {
+        AudioManager.Instance?.PlayButtonClick();
         CloseTutorial();
     }
 
@@ -119,5 +127,32 @@ public class TutorialUIController : MonoBehaviour
         {
             panelRoot.SetActive(visible);
         }
+    }
+
+    private void BuildDefaultPages()
+    {
+        pages = new List<TutorialPage>
+        {
+            new TutorialPage
+            {
+                body = "You are Gloopy, a little alien stuck on a strange planet. You should not be here and need to find your spaceship in order to go home."
+            },
+            new TutorialPage
+            {
+                body = "Move controlled hosts with WASD. In your base form you cannot move at all, so click a nearby host to target it and press Space to infect it."
+            },
+            new TutorialPage
+            {
+                body = "Walkers move on land, swimmers move through water, and flyers can cross both while ignoring obstacles."
+            },
+            new TutorialPage
+            {
+                body = "Watch out for the police. They can arrest you if they catch you while you are exposed in base form."
+            },
+            new TutorialPage
+            {
+                body = "Keep an eye on your host timer. If a swimmer dies while you are over water, you will drown and lose."
+            }
+        };
     }
 }

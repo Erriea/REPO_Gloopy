@@ -112,6 +112,12 @@ public class HostSpawnManager : MonoBehaviour
                 spawnRotation,
                 spawnedHostsParent);
 
+            if (spawnedHost != null && !spawnedHost.IsValidSpawnLocation())
+            {
+                Destroy(spawnedHost.gameObject);
+                continue;
+            }
+
             spawnedHosts.Add(spawnedHost.gameObject);
         }
     }

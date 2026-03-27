@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: 4800000, guid: 027868da268ad684fa8d4756201a8ea9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -17,8 +17,7 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -102,8 +101,12 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
+    - _NoiseScale: 0
+    - _NoiseStrength: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
+    - _PatchScale: 3.77
+    - _PatchStrength: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
@@ -117,7 +120,9 @@ Material:
     m_Colors:
     - _BaseColor: {r: 0.10220716, g: 0.6226415, b: 0.115902744, a: 1}
     - _Color: {r: 0.10220713, g: 0.62264144, b: 0.115902714, a: 1}
+    - _DarkColor: {r: 0.10669278, g: 0.509434, b: 0.12107644, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _HighlightColor: {r: 0.5540753, g: 0.82641506, b: 0.30405825, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

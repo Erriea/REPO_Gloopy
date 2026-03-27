@@ -1,0 +1,18 @@
+Unity Editor: 6000.0.44f1
+
+Core packages:
+com.unity.ai.navigation==2.0.6
+com.unity.inputsystem==1.13.1
+com.unity.render-pipelines.universal==17.0.4
+com.unity.ugui==2.0.0
+com.unity.timeline==1.8.7
+com.unity.visualscripting==1.9.6
+
+Editor / integration packages:
+com.unity.collab-proxy==2.12.4
+com.unity.ide.rider==3.0.31
+com.unity.ide.visualstudio==2.0.22
+com.unity.multiplayer.center==1.0.0
+com.unity.test-framework==1.5.1
+
+Built-in Unity modules are also enabled through the project manifest, including audio, particles, physics, terrain, UI, video, and XR support modules.

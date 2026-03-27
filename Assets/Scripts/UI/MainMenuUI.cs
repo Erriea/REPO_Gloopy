@@ -7,12 +7,14 @@ public class MainMenuUI : MonoBehaviour
 
     public void PlayGame()
     {
+        AudioManager.Instance?.PlayButtonClick();
         GameLaunchContext.ShowTutorialOnNextGameLoad = true;
         SceneManager.LoadScene(gameSceneName);
     }
 
     public void QuitGame()
     {
+        AudioManager.Instance?.PlayButtonClick();
         Application.Quit();
 
 #if UNITY_EDITOR

@@ -15,6 +15,8 @@ public class HostMovementController : MonoBehaviour
     [SerializeField] private float obstacleCheckRadius = 0.35f;
     [SerializeField] private float flyerHoverHeight = 2.5f;
     [SerializeField] private float flyerHeightSmoothing = 8f;
+    [SerializeField] private float flyerBobAmplitude = 0.25f;
+    [SerializeField] private float flyerBobFrequency = 4f;
 
     private bool playerControlEnabled;
     private HostType hostType = HostType.Walker;
@@ -24,6 +26,7 @@ public class HostMovementController : MonoBehaviour
     private Quaternion initialRotationOffset;
     private Vector3 baseScale;
     private float movementPulseTimer;
+    private float flyerBobTimer;
     private bool movedThisFrame;
 
     private void Awake()
@@ -39,7 +42,6 @@ public class HostMovementController : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.IsGameplayLocked())
         {
-            MaintainSpecialMovementState();
             return;
         }
 
@@ -54,16 +56,15 @@ public class HostMovementController : MonoBehaviour
         Vector3 moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
         if (moveDirection.sqrMagnitude <= 0f)
         {
-            MaintainSpecialMovementState();
             return;
         }
 
         TryMove(moveDirection, moveSpeed);
-        MaintainSpecialMovementState();
     }
 
     private void LateUpdate()
     {
+        MaintainSpecialMovementState();
         UpdateMovementPulse();
         movedThisFrame = false;
     }
@@ -105,7 +106,8 @@ public class HostMovementController : MonoBehaviour
 
         if (hostType == HostType.Flyer)
         {
-            desiredPosition.y = flyerTargetHeight;
+            // Preserve the current wave height while moving horizontally.
+            desiredPosition.y = transform.position.y;
         }
 
         transform.position = desiredPosition;
@@ -192,8 +194,11 @@ public class HostMovementController : MonoBehaviour
             return;
         }
 
+        flyerBobTimer += Time.deltaTime * flyerBobFrequency;
+
+        float bobOffset = Mathf.Sin(flyerBobTimer) * flyerBobAmplitude;
         Vector3 position = transform.position;
-        position.y = Mathf.Lerp(position.y, flyerTargetHeight, flyerHeightSmoothing * Time.deltaTime);
+        position.y = Mathf.Lerp(position.y, flyerTargetHeight + bobOffset, flyerHeightSmoothing * Time.deltaTime);
         transform.position = position;
     }
 
@@ -202,6 +207,7 @@ public class HostMovementController : MonoBehaviour
         Vector3 position = transform.position;
         position.y = flyerTargetHeight;
         transform.position = position;
+        flyerBobTimer = 0f;
     }
 
     private void FaceMovementDirection(Vector3 moveDirection)

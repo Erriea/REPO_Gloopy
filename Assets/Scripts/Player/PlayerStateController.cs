@@ -49,6 +49,7 @@ public class PlayerStateController : MonoBehaviour
         currentHost = targetHost;
         currentHost.Infect();
         currentForm = PlayerForm.HostForm;
+        AudioManager.Instance?.PlaySwapHost();
 
         if (alienBaseObject != null)
         {

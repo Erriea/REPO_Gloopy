@@ -50,6 +50,7 @@ public class TargetingController : MonoBehaviour
         }
 
         selectedHost = host;
+        AudioManager.Instance?.PlayTargetHost();
     }
 
     private void HandleInfectionInput()
