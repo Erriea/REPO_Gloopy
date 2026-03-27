@@ -53,3 +53,8 @@ See [requirements.txt](/C:/Code/2026%20Unity/REPO_Gloopy/requirements.txt) for t
 
 ## AI Use Note
 AI was used to help design systems, generate and revise gameplay code, create simple custom shaders, debug implementation issues, and draft supporting documentation.
+
+## AI Reflection
+AI was most useful in helping me organise my ideas, refine the game concept, and build technical systems much faster than I could have alone. It was especially valuable for writing gameplay code, planning the project structure, and creating custom shaders, even though those shaders often needed manual tweaking to make the colours and final look feel right. AI sometimes struggled to understand exactly what I meant when describing movement or behaviour in a 3D Unity scene, so testing and iteration were still essential. Overall, it mainly changed my process by streamlining it and letting me focus more on directing and refining the game.
+
+I tried to use AI responsibly and transparently. I used it for concept refinement, coding, shader setup, planning documents, and repository documentation, including the game design document, Unity build plan, and prototype roadmap. However, I did not use AI to generate the final art, 3D assets, or audio, because I believe using AI in those areas raises stronger concerns around originality, consent, and fair use. All art and assets were either made by me or sourced separately, and all sourced audio was credited. In future, I would continue using AI mainly for technical support and brainstorming, while keeping the core creative direction, visual identity, and authorship firmly my own.
