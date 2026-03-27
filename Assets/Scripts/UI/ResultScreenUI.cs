@@ -9,6 +9,7 @@ public class ResultScreenUI : MonoBehaviour
     [SerializeField] private GameObject panelRoot;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI messageText;
+    [SerializeField] private TextMeshProUGUI finalTimeText;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button menuButton;
     [SerializeField] private Image backgroundImage;
@@ -74,7 +75,11 @@ public class ResultScreenUI : MonoBehaviour
         {
             case GameManager.GameState.Win:
                 AudioManager.Instance?.PlayWin();
-                ShowResult(winTitle, string.IsNullOrWhiteSpace(reason) ? defaultWinMessage : reason, winBackgroundSprite);
+                ShowResult(
+                    winTitle,
+                    string.IsNullOrWhiteSpace(reason) ? defaultWinMessage : reason,
+                    winBackgroundSprite,
+                    true);
                 break;
 
             case GameManager.GameState.GameOver:
@@ -83,7 +88,8 @@ public class ResultScreenUI : MonoBehaviour
                     loseTitle,
                     loseMessage,
                     GetLoseBackgroundSprite(loseMessage),
-                    loseScreenDelay));
+                    loseScreenDelay,
+                    false));
                 break;
 
             default:
@@ -92,7 +98,7 @@ public class ResultScreenUI : MonoBehaviour
         }
     }
 
-    private void ShowResult(string title, string message, Sprite backgroundSprite)
+    private void ShowResult(string title, string message, Sprite backgroundSprite, bool showFinalTime)
     {
         if (titleText != null)
         {
@@ -110,6 +116,16 @@ public class ResultScreenUI : MonoBehaviour
             backgroundImage.enabled = backgroundSprite != null;
         }
 
+        if (finalTimeText != null)
+        {
+            finalTimeText.gameObject.SetActive(showFinalTime);
+
+            if (showFinalTime && GameManager.Instance != null)
+            {
+                finalTimeText.text = $"Time: {GameManager.Instance.GetFormattedElapsedTime()}";
+            }
+        }
+
         SetPanelVisible(true);
     }
 
@@ -121,11 +137,11 @@ public class ResultScreenUI : MonoBehaviour
         }
     }
 
-    private IEnumerator ShowResultAfterDelay(string title, string message, Sprite backgroundSprite, float delay)
+    private IEnumerator ShowResultAfterDelay(string title, string message, Sprite backgroundSprite, float delay, bool showFinalTime)
     {
         yield return new WaitForSeconds(delay);
         AudioManager.Instance?.PlayLose();
-        ShowResult(title, message, backgroundSprite);
+        ShowResult(title, message, backgroundSprite, showFinalTime);
         pendingShowCoroutine = null;
     }
 

@@ -152,6 +152,8 @@ MonoBehaviour:
   obstacleCheckRadius: 0.35
   flyerHoverHeight: 2.5
   flyerHeightSmoothing: 8
+  flyerBobAmplitude: 0.25
+  flyerBobFrequency: 4
 --- !u!114 &5930187120794382154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83ab7386afe36664b8d68649c86471ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wanderSpeed: 4
+  wanderSpeed: 5
   directionChangeInterval: 5
   wanderRadius: 40
 --- !u!1 &6254569923248680234

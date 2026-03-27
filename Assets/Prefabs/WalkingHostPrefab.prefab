@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec8e6855a884f245869e3393d38e0d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 4
   turnSpeed: 10
   rotationOffsetEuler: {x: 0, y: 0, z: 0}
   movementPulseFrequency: 8
@@ -293,6 +293,8 @@ MonoBehaviour:
   obstacleCheckRadius: 0.35
   flyerHoverHeight: 2.5
   flyerHeightSmoothing: 8
+  flyerBobAmplitude: 0.25
+  flyerBobFrequency: 4
 --- !u!114 &7417236559752007702
 MonoBehaviour:
   m_ObjectHideFlags: 0
